@@ -15,7 +15,6 @@ app.use(cors());
 app.use('/user', userRouter);
 app.use('/task', taskRouter);
 
-
 const run = async () => {
   await mongoose.connect(config.mongoose.db);
 
