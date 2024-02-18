@@ -2,15 +2,8 @@ import { Router } from 'express';
 import User from '../models/User';
 import { typeUserWithoutToken } from '../types';
 import { mongo } from 'mongoose';
-import bcrypt from 'bcrypt';
 
 const userRouter = Router();
-
-userRouter.get('/', async (req, res, next) => {
-  const results = await User.find();
-
-  return res.send(results);
-});
 
 userRouter.post('/', async (req, res, next) => {
   try {
