@@ -70,9 +70,15 @@ taskRouter.delete('/:id', auth, async (req: RequestWithUser, res: Response, next
   const taskId = req.params.id;
 
   try {
+    const task = await Task.findOne({_id: taskId, user: req.user?._id});
+
+    if (!task) {
+      return res.status(404).send({message: 'Task is already deleted'});
+    }
+
     await Task.deleteOne({_id: taskId, user: req.user?._id});
 
-    res.status(204).send({message: 'Deleted successfully'});
+    res.send({message: 'Deleted successfully'});
   } catch (error) {
     res.status(500).send({message: error});
 
