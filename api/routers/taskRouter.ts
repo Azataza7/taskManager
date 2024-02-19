@@ -2,14 +2,14 @@ import { NextFunction, Response, Router } from 'express';
 
 import auth from '../middleware/auth';
 import Task from '../models/Task';
-import { RequestWithUser } from '../types';
+import { RequestWithUser, typeTask } from '../types';
 import { MongooseError } from 'mongoose';
 
 const taskRouter = Router();
 
 taskRouter.get('/', auth, async (req: RequestWithUser, res: Response, next: NextFunction) => {
   try {
-    const userTasks = await Task.find({user: req.user?._id});
+    const userTasks: typeTask[] = await Task.find({user: req.user?._id});
 
     return res.send(userTasks);
   } catch (error) {
@@ -34,7 +34,6 @@ taskRouter.post('/', auth, async (req: RequestWithUser, res: Response, next: Nex
     await newTask.save();
     res.status(201).send(newTask);
   } catch (error) {
-
     if (MongooseError || error) {
       return res.status(400).send({message: error});
     }
@@ -73,7 +72,7 @@ taskRouter.delete('/:id', auth, async (req: RequestWithUser, res: Response, next
     const task = await Task.findOne({_id: taskId, user: req.user?._id});
 
     if (!task) {
-      return res.status(404).send({message: 'Task is already deleted'});
+      return res.status(403).send({message: 'Task is already deleted or No task on your account'});
     }
 
     await Task.deleteOne({_id: taskId, user: req.user?._id});
